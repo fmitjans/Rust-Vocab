@@ -1,0 +1,1 @@
+pub const QUESTIONS_FOLDER: &str = "questions";
