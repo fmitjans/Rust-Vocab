@@ -14,28 +14,33 @@ pub fn read_json(file_path: &str) -> Vec<Question> {
 pub struct AtomicQuestion {
     question: String,
     answer: String,
+    score: u32,
     #[serde(default)]
     note: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SequenceQuestion {
-    score: u32,
     content: Vec<AtomicQuestion>
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct SimpleQuestion {
-    score: u32,
-    #[serde(flatten)]
-    content: AtomicQuestion,
-}
+// #[derive(Serialize, Deserialize, Debug)]
+// pub struct SimpleQuestion {
+//     #[serde(flatten)]
+//     content: AtomicQuestion,
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum Question {
+
     #[serde(rename = "sequence")]
     SequenceQuestion(SequenceQuestion),
-    #[serde(rename = "simple")]
-    SimpleQuestion(SimpleQuestion),
+    
+    #[serde(rename = "atomic")]
+    AtomicQuestion(AtomicQuestion),
+    
+    // #[serde(rename = "simple")]
+    // SimpleQuestion(SimpleQuestion),
+
 }
