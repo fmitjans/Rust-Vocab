@@ -1,8 +1,8 @@
 
 mod file_handler;
 mod params;
-mod myjson;
 mod question_roster;
+mod question;
 
 use file_handler::FileReader;
 

@@ -1,5 +1,5 @@
 
-use super::myjson::{Question};
+use crate::question::{Question, AtomicQuestion, SequenceQuestion};
 
 pub struct QuestionRoster {
     questions: Vec<Question>,
