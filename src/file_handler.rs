@@ -4,11 +4,13 @@ use std::io;
 use std::ops::RangeInclusive;
 
 use super::params::{QUESTIONS_FOLDER};
+use super::myjson::{self, Question};
+
 
 pub struct FileReader;
 
 impl FileReader {
-    pub fn load_questions() {
+    pub fn load_questions() -> Vec<Question> {
 
         let mut available_files = get_file_names();
 
@@ -17,7 +19,17 @@ impl FileReader {
         print_options(&available_files);
 
         let valid_range = RangeInclusive::new(1, available_files.len());
-        let selected_numbers = get_valid_user_numbers(&valid_range);
+        let selected_number = get_valid_user_numbers(&valid_range)[0];
+        let selected_file_name = &available_files[selected_number - 1];
+        
+        let selected_file_path = Path::new(QUESTIONS_FOLDER)
+        .join(selected_file_name)
+        .to_str()
+        .unwrap()
+        .to_string(); // Convert to owned String
+    
+        let question_vec = myjson::read_json(&selected_file_path);
+        question_vec
     }
 }
 
