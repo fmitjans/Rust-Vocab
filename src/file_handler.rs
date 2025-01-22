@@ -28,7 +28,7 @@ impl FileReader {
         .unwrap()
         .to_string(); // Convert to owned String
     
-        let question_vec = read_json(&selected_file_path);
+        let mut question_vec = read_json(&selected_file_path);
         question_vec
     }
 }
@@ -116,7 +116,7 @@ fn validate_numbers(numbers: &[usize], valid_range: &RangeInclusive<usize>) -> R
 fn read_json(file_path: &str) -> Vec<Question> {
     assert!(file_path.ends_with(".json"), "File is not json");
     let data = fs::read_to_string(file_path).unwrap();
-    let q_vec: Vec<Question> = serde_json::from_str(&data).unwrap();
+    let mut q_vec: Vec<Question> = serde_json::from_str(&data).unwrap();
 
     q_vec
 }

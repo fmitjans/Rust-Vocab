@@ -14,9 +14,15 @@ fn main() {
     let mut roster = QuestionRoster::new(question_vec);
     roster.shuffle_by_scores();
 
-    for e in &roster.questions {
-        println!("{:#?}", e);
-    }
+    // for e in &roster.questions {
+    //     println!("{:#?}", e);
+    // }
+    println!("{:#?}", roster.questions[1]);
 
-    println!("Bottom level limit: {}", roster.get_bottom_level_limit());
+    match &mut roster.questions[1] {
+        question::Question::AtomicQuestion(q) => {
+            q.interrogate();
+        },
+        _ => (),
+    }
 }
