@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+type ScoreType = i32;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AtomicQuestion {
     question: String,
     answer: String,
-    score: u32,
+    score: ScoreType,
     #[serde(default)]
     note: Option<String>,
 }
@@ -33,4 +35,20 @@ pub enum Question {
     // #[serde(rename = "simple")]
     // SimpleQuestion(SimpleQuestion),
 
+}
+
+impl Question {
+    pub fn min_score(&self) -> ScoreType {
+        match self {
+            Question::AtomicQuestion(q) => q.score,
+            Question::SequenceQuestion(q) => {
+                let min_question = q.content
+                    .iter()
+                    .min_by_key(|aq| aq.score)
+                    .unwrap();
+
+                min_question.score
+            },
+        }
+    }
 }
