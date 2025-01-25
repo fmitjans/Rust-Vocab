@@ -3,9 +3,11 @@ mod file_handler;
 mod params;
 mod question_roster;
 mod question;
+mod terminal;
 
 use file_handler::FileReader;
 use question_roster::QuestionRoster;
+use terminal::Terminal;
 
 fn main() {
     // myjson::read_json();
@@ -25,4 +27,9 @@ fn main() {
         },
         _ => (),
     }
+}
+
+
+fn main2() {
+    println!();
 }

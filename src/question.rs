@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::terminal::Terminal;
 
 type ScoreType = i32;
 
@@ -64,9 +65,10 @@ impl AtomicQuestion {
         
         let mut decreased_score_already = false;
         print!("\x1B[2J\x1B[1;1H"); // clear console
+        let mut terminal = Terminal::new(); // rustyline terminal
 
         loop {
-            match self.ask() {
+            match self.ask(&mut terminal) {
                 
                 Answer::Correct => {
                     println!("Correct!");
@@ -85,17 +87,17 @@ impl AtomicQuestion {
         }
     }
     
-    pub fn ask(&mut self) -> Answer {
+    pub fn ask(&mut self, terminal: &mut Terminal) -> Answer {
 
         println!("Current score: {}\n", self.score);
 
-        println!("Question:\n {}\n", self.question);
+        println!("{}", self.question);
 
         if let Some(note) = &self.note {
-            println!("Note: \"{}\"\n", note);
+            println!("\"{}\"\n", note);
         }
 
-        let user_answer = ask_for_input("Answer: ");
+        let user_answer = terminal.read_line(">> ");
 
         if user_answer == self.answer {
             Answer::Correct
@@ -106,8 +108,22 @@ impl AtomicQuestion {
     }
 
     fn give_feedback(&self, user_answer: String) {
-        println!("Incorrect! The correct answer is: {}\n", self.answer);
-        println!("Your answer: {}\n", user_answer);
+        println!("{}", self.answer);
+        // for (char, char_answer) in str1.chars().zip(str2.chars()) {
+        //     if c1 == c2 {
+        //         println!("Match: {}", c1);
+        //     } else {
+        //         println!("Mismatch: {} vs {}", c1, c2);
+        //     }
+        // }
+        for (char, correct) in user_answer.chars().zip(self.answer.chars()) {
+            if char == correct {
+                print_green(&char.to_string());
+            } else {
+                print_red(&char.to_string());
+            }
+        }
+        println!();
     }
 }
 
@@ -121,4 +137,12 @@ fn ask_for_input(prompt: &str) -> String {
     io::stdin().read_line(&mut input).unwrap();
 
     input.trim().to_string()
+}
+
+fn print_red(s: &str) {
+    print!("\x1b[31m{}\x1b[0m", s);
+}
+
+fn print_green(s: &str) {
+    print!("\x1b[32m{}\x1b[0m", s);
 }
