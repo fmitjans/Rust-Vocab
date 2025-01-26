@@ -21,7 +21,7 @@ impl Terminal {
     pub fn read_line(&mut self, prompt: &str) -> String {
         match self.rl.readline(prompt) {
             Ok(line) => {
-                self.rl.add_history_entry(line.as_str());
+                self.rl.add_history_entry(line.as_str()).unwrap();
                 line
             }
             Err(rustyline::error::ReadlineError::Interrupted) => {

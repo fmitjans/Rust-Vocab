@@ -7,7 +7,6 @@ mod terminal;
 
 use file_handler::FileReader;
 use question_roster::QuestionRoster;
-use terminal::Terminal;
 
 fn main() {
     // myjson::read_json();
@@ -19,17 +18,19 @@ fn main() {
     // for e in &roster.questions {
     //     println!("{:#?}", e);
     // }
-    println!("{:#?}", roster.questions[1]);
 
-    match &mut roster.questions[1] {
-        question::Question::AtomicQuestion(q) => {
-            q.interrogate();
-        },
-        _ => (),
-    }
+    // println!("{:#?}", roster.questions[1]);
+    // match &mut roster.questions[1] {
+    //     question::Question::AtomicQuestion(q) => {
+    //         q.interrogate();
+    //     },
+    //     _ => (),
+    // }
+
+    roster.interrogate_lowest();
 }
 
 
-fn main2() {
-    println!();
-}
+// fn main2() {
+//     println!();
+// }

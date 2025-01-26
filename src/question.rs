@@ -52,11 +52,26 @@ impl Question {
             },
         }
     }
+
+    pub fn interrogate(&mut self) {
+        match self {
+            Question::AtomicQuestion(q) => q.interrogate(),
+            Question::SequenceQuestion(q) => q.interrogate(),
+            }
+        }
 }
 
-enum Answer {
+pub enum Answer {
     Correct,
     Incorrect(String),
+}
+
+impl SequenceQuestion {
+    pub fn interrogate(&mut self) {
+        for aq in &mut self.content {
+            aq.interrogate();
+        }
+    }
 }
 
 impl AtomicQuestion {
@@ -127,17 +142,17 @@ impl AtomicQuestion {
     }
 }
 
-fn ask_for_input(prompt: &str) -> String {
-    use std::io::{self, Write};
+// fn ask_for_input(prompt: &str) -> String {
+//     use std::io::{self, Write};
 
-    print!("{}", prompt);
-    io::stdout().flush().unwrap();
+//     print!("{}", prompt);
+//     io::stdout().flush().unwrap();
 
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).unwrap();
+//     let mut input = String::new();
+//     io::stdin().read_line(&mut input).unwrap();
 
-    input.trim().to_string()
-}
+//     input.trim().to_string()
+// }
 
 fn print_red(s: &str) {
     print!("\x1b[31m{}\x1b[0m", s);
