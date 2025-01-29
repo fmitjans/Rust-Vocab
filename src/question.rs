@@ -54,9 +54,10 @@ impl Question {
     }
 
     pub fn interrogate(&mut self) {
+        let min_score = self.min_score();
         match self {
             Question::AtomicQuestion(q) => q.interrogate(),
-            Question::SequenceQuestion(q) => q.interrogate(),
+            Question::SequenceQuestion(q) => q.interrogate(min_score),
             }
         }
 }
@@ -67,9 +68,22 @@ pub enum Answer {
 }
 
 impl SequenceQuestion {
-    pub fn interrogate(&mut self) {
-        for aq in &mut self.content {
-            aq.interrogate();
+    pub fn interrogate(&mut self, min_score: ScoreType) {
+        println!("Sequence question with min score: {}", min_score);
+
+        for atomic_question in &mut self.content {
+
+            // if good score, skip question
+            if atomic_question.score != min_score {
+                println!("Skipping question");
+                atomic_question.print_question();
+                println!("{}", atomic_question.answer);
+                println!();
+                continue;
+            }
+
+            // if bad score
+            atomic_question.interrogate();
         }
     }
 }
@@ -79,7 +93,7 @@ impl AtomicQuestion {
     pub fn interrogate(& mut self) {
         
         let mut decreased_score_already = false;
-        print!("\x1B[2J\x1B[1;1H"); // clear console
+        // print!("\x1B[2J\x1B[1;1H"); // clear console
         let mut terminal = Terminal::new(); // rustyline terminal
 
         loop {
@@ -104,13 +118,9 @@ impl AtomicQuestion {
     
     pub fn ask(&mut self, terminal: &mut Terminal) -> Answer {
 
-        println!("Current score: {}\n", self.score);
+        println!("Current score: {}", self.score);
 
-        println!("{}", self.question);
-
-        if let Some(note) = &self.note {
-            println!("\"{}\"\n", note);
-        }
+        self.print_question();
 
         let user_answer = terminal.read_line(">> ");
 
@@ -120,6 +130,14 @@ impl AtomicQuestion {
             Answer::Incorrect(user_answer)
         }
         
+    }
+
+    fn print_question(&self) {
+        println!("{}", self.question);
+
+        if let Some(note) = &self.note {
+            println!("\"{}\"\n", note);
+        }
     }
 
     fn give_feedback(&self, user_answer: String) {

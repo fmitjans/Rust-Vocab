@@ -19,14 +19,6 @@ fn main() {
     //     println!("{:#?}", e);
     // }
 
-    // println!("{:#?}", roster.questions[1]);
-    // match &mut roster.questions[1] {
-    //     question::Question::AtomicQuestion(q) => {
-    //         q.interrogate();
-    //     },
-    //     _ => (),
-    // }
-
     roster.interrogate_lowest();
 }
 

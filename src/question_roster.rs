@@ -33,9 +33,13 @@ impl QuestionRoster {
     fn get_bottom_level_limit(&self) -> usize {
         let min_score = self.questions.first().unwrap().min_score();
 
-        self.questions
+        let question_count = self.questions
             .iter()
             .take_while(|q| q.min_score() == min_score)
-            .count()
+            .count();
+        
+        println!("Asking {} questions with score {}", question_count, min_score);
+
+        question_count
     }
 }
