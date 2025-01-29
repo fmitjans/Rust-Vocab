@@ -63,7 +63,7 @@ impl Question {
 }
 
 pub enum Answer {
-    Correct,
+    Correct(String),
     Incorrect(String),
 }
 
@@ -99,8 +99,8 @@ impl AtomicQuestion {
         loop {
             match self.ask(&mut terminal) {
                 
-                Answer::Correct => {
-                    println!("Correct!");
+                Answer::Correct(a) => {
+                    self.give_feedback(a);
                     self.score += 1;
                     break;
                 },
@@ -124,8 +124,8 @@ impl AtomicQuestion {
 
         let user_answer = terminal.read_line(">> ");
 
-        if user_answer == self.answer {
-            Answer::Correct
+        if user_answer.to_lowercase() == self.answer.to_lowercase() {
+            Answer::Correct(user_answer)
         } else {
             Answer::Incorrect(user_answer)
         }
@@ -152,9 +152,15 @@ impl AtomicQuestion {
         for (char, correct) in user_answer.chars().zip(self.answer.chars()) {
             if char == correct {
                 print_green(&char.to_string());
+            } else if char.to_lowercase().to_string() == correct.to_lowercase().to_string() {
+                print_orange(&char.to_string());
             } else {
                 print_red(&char.to_string());
             }
+        }
+
+        if user_answer.len() < self.answer.len() {
+            print_red(&"...");
         }
         println!();
     }
@@ -174,6 +180,10 @@ impl AtomicQuestion {
 
 fn print_red(s: &str) {
     print!("\x1b[31m{}\x1b[0m", s);
+}
+
+fn print_orange(s: &str) {
+    print!("\x1b[33m{}\x1b[0m", s);
 }
 
 fn print_green(s: &str) {

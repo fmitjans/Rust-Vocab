@@ -14,12 +14,11 @@ fn main() {
 
     let mut roster = QuestionRoster::new(question_vec);
     roster.shuffle_by_scores();
-
+    roster.interrogate_lowest();
+    
     // for e in &roster.questions {
     //     println!("{:#?}", e);
     // }
-
-    roster.interrogate_lowest();
 }
 
 
