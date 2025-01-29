@@ -101,7 +101,9 @@ impl AtomicQuestion {
                 
                 Answer::Correct(a) => {
                     self.give_feedback(a);
-                    self.score += 1;
+                    if !decreased_score_already {
+                        self.score += 1;
+                    }
                     break;
                 },
 
