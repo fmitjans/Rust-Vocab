@@ -46,6 +46,8 @@ impl Question {
 
     pub fn interrogate(&mut self) {
         let min_score = self.min_score();
+        print!("\x1B[2J\x1B[1;1H"); // clear console
+
         match self {
             Question::AtomicQuestion(q) => q.interrogate(),
             Question::SequenceQuestion(q) => q.interrogate(min_score),
@@ -60,15 +62,17 @@ pub enum Answer {
 
 impl SequenceQuestion {
     pub fn interrogate(&mut self, min_score: ScoreType) {
-        println!("Sequence question with min score: {}", min_score);
+        // println!("Sequence question with min score: {}", min_score);
 
         for atomic_question in &mut self.content {
 
             // if good score, skip question
             if atomic_question.score != min_score {
+                println!();
                 println!("Skipping question");
                 atomic_question.print_question();
                 println!("{}", atomic_question.answer);
+                pause_for_key();
                 println!();
                 continue;
             }
@@ -84,7 +88,6 @@ impl AtomicQuestion {
     pub fn interrogate(& mut self) {
         
         let mut decreased_score_already = false;
-        // print!("\x1B[2J\x1B[1;1H"); // clear console
         let mut terminal = Terminal::new(); // rustyline terminal
 
         loop {
@@ -95,6 +98,7 @@ impl AtomicQuestion {
                     if !decreased_score_already {
                         self.score += 1;
                     }
+                    pause_for_key();
                     break;
                 },
 
@@ -134,7 +138,8 @@ impl AtomicQuestion {
     }
 
     fn give_feedback(&self, user_answer: String) {
-        println!("{}", self.answer);
+        print_green(&self.answer);
+        print!("\n");
 
         for (char, correct) in user_answer.chars().zip(self.answer.chars()) {
             if char == correct {
@@ -151,6 +156,11 @@ impl AtomicQuestion {
         }
         println!();
     }
+}
+
+fn pause_for_key() {
+    let mut terminal = Terminal::new();
+    terminal.read_line("Press Enter to continue...");
 }
 
 fn print_red(s: &str) {

@@ -38,7 +38,7 @@ impl QuestionRoster {
             .take_while(|q| q.min_score() == min_score)
             .count();
         
-        println!("Asking {} questions with score {}", question_count, min_score);
+        // println!("Asking {} questions with score {}", question_count, min_score);
 
         question_count
     }
