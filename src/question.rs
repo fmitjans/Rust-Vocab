@@ -17,12 +17,6 @@ pub struct SequenceQuestion {
     content: Vec<AtomicQuestion>
 }
 
-// #[derive(Serialize, Deserialize, Debug)]
-// pub struct SimpleQuestion {
-//     #[serde(flatten)]
-//     content: AtomicQuestion,
-// }
-
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum Question {
@@ -32,9 +26,6 @@ pub enum Question {
     
     #[serde(rename = "atomic")]
     AtomicQuestion(AtomicQuestion),
-    
-    // #[serde(rename = "simple")]
-    // SimpleQuestion(SimpleQuestion),
 
 }
 
@@ -144,13 +135,7 @@ impl AtomicQuestion {
 
     fn give_feedback(&self, user_answer: String) {
         println!("{}", self.answer);
-        // for (char, char_answer) in str1.chars().zip(str2.chars()) {
-        //     if c1 == c2 {
-        //         println!("Match: {}", c1);
-        //     } else {
-        //         println!("Mismatch: {} vs {}", c1, c2);
-        //     }
-        // }
+
         for (char, correct) in user_answer.chars().zip(self.answer.chars()) {
             if char == correct {
                 print_green(&char.to_string());
@@ -167,18 +152,6 @@ impl AtomicQuestion {
         println!();
     }
 }
-
-// fn ask_for_input(prompt: &str) -> String {
-//     use std::io::{self, Write};
-
-//     print!("{}", prompt);
-//     io::stdout().flush().unwrap();
-
-//     let mut input = String::new();
-//     io::stdin().read_line(&mut input).unwrap();
-
-//     input.trim().to_string()
-// }
 
 fn print_red(s: &str) {
     print!("\x1b[31m{}\x1b[0m", s);
