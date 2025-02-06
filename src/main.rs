@@ -5,7 +5,7 @@ mod question_roster;
 mod question;
 mod terminal;
 
-use file_handler::FileReader;
+use file_handler::{FileReader, save_json};
 use question_roster::QuestionRoster;
 
 fn main() {
@@ -16,9 +16,8 @@ fn main() {
     roster.shuffle_by_scores();
     roster.interrogate_lowest();
 
-    for e in &roster.questions {
-        println!("{:#?}", e);
-    }
+    save_json(&roster.questions, "saved.json");
+
 }
 
 

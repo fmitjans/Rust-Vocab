@@ -120,3 +120,16 @@ fn read_json(file_path: &str) -> Vec<Question> {
 
     q_vec
 }
+
+pub fn save_json(questions: &Vec<Question>, file_name: &str) {
+    assert!(file_name.ends_with(".json"), "Save file not .json");
+    
+    let file_path = Path::new(QUESTIONS_FOLDER)
+    .join(file_name)
+    .to_str()
+    .unwrap()
+    .to_string(); // Convert to owned String
+
+    let json_string = serde_json::to_string_pretty(questions).unwrap();
+    fs::write(file_path, json_string).unwrap();
+}
