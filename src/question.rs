@@ -126,6 +126,7 @@ impl AtomicQuestion {
     
     pub fn ask(&mut self, terminal: &mut Terminal) -> Answer {
 
+        println!();
         println!("Current score: {}", self.score);
 
         self.print_question();
@@ -144,8 +145,9 @@ impl AtomicQuestion {
         println!("{}", self.question);
 
         if let Some(note) = &self.note {
-            println!("\"{}\"\n", note);
+            println!("\"{}\"", note);
         }
+        println!();
     }
 
     fn give_feedback(&self, user_answer: String) {
