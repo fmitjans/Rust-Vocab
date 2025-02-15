@@ -9,11 +9,11 @@ use file_handler::{FileReader, save_json};
 use question_roster::QuestionRoster;
 
 fn main() {
-    // myjson::read_json();
     let question_vec = FileReader::load_questions();
 
     let mut roster = QuestionRoster::new(question_vec);
     roster.shuffle_by_scores();
+    roster.even_out_scores();
     roster.interrogate_lowest();
 
     save_json(&roster.questions, "saved.json");

@@ -30,6 +30,19 @@ impl QuestionRoster {
         }
     }
 
+    pub fn even_out_scores(&mut self) {
+        println!("Evening out scores");
+        println!("Highest score: {}", self.questions.last().unwrap().min_score());
+        println!("Lowest score: {}", self.questions.first().unwrap().min_score());
+        let lowest_score = self.questions.first().unwrap().min_score();
+        for question in self.questions.iter_mut() {
+            question.decrease_score(lowest_score);
+        }
+        println!("Scores evened out");
+        println!("Highest score: {}", self.questions.last().unwrap().min_score());
+        println!("Lowest score: {}", self.questions.first().unwrap().min_score());
+    }
+
     fn get_bottom_level_limit(&self) -> usize {
         let min_score = self.questions.first().unwrap().min_score();
 

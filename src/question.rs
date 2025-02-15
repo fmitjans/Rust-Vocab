@@ -53,6 +53,17 @@ impl Question {
             Question::SequenceQuestion(q) => q.interrogate(min_score),
             }
         }
+
+    pub fn decrease_score(&mut self, amount: ScoreType) {
+        match self {
+            Question::AtomicQuestion(q) => q.score -= amount,
+            Question::SequenceQuestion(q) => {
+                for atomic_question in &mut q.content {
+                    atomic_question.score -= amount;
+                }
+            },
+        }
+    }
 }
 
 pub enum Answer {
