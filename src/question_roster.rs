@@ -30,7 +30,13 @@ impl QuestionRoster {
         self.set_bottom_level_limit();
 
         while self.current_question_index < self.bottom_limit_index {
-            self.questions[self.current_question_index].interrogate();
+
+            let mut current_question = self.questions[self.current_question_index].clone();
+
+            current_question.interrogate(self);
+
+            self.questions[self.current_question_index] = current_question;
+
             self.current_question_index += 1;
         }
     }

@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 use crate::terminal::Terminal;
+use crate::question_roster::QuestionRoster;
 
 type ScoreType = i32;
 
+#[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AtomicQuestion {
     question: String,
@@ -12,11 +14,13 @@ pub struct AtomicQuestion {
     note: Option<String>,
 }
 
+#[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SequenceQuestion {
     content: Vec<AtomicQuestion>
 }
 
+#[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum Question {
@@ -44,7 +48,7 @@ impl Question {
         }
     }
 
-    pub fn interrogate(&mut self) {
+    pub fn interrogate(&mut self, roster_ref: &mut QuestionRoster) {
         let min_score = self.min_score();
         print!("\x1B[2J\x1B[1;1H"); // clear console
 
