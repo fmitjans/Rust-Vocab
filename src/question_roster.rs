@@ -5,13 +5,17 @@ use crate::question::{Question};
 
 pub struct QuestionRoster {
     pub questions: Vec<Question>,
+    pub current_question_index: usize,
+    pub bottom_limit_index: usize,
 }
 
 impl QuestionRoster {
 
     pub fn new(questions: Vec<Question>) -> Self {
         Self {
-            questions,
+            questions: questions,
+            current_question_index: 0,
+            bottom_limit_index: 0,
         }
     }
 
@@ -23,10 +27,11 @@ impl QuestionRoster {
     }
 
     pub fn interrogate_lowest(&mut self) {
-        let bottom_level_limit = self.get_bottom_level_limit();
+        self.set_bottom_level_limit();
 
-        for i in 0..bottom_level_limit {
-            self.questions[i].interrogate();
+        while self.current_question_index < self.bottom_limit_index {
+            self.questions[self.current_question_index].interrogate();
+            self.current_question_index += 1;
         }
     }
 
@@ -43,7 +48,7 @@ impl QuestionRoster {
         println!("Lowest score: {}", self.questions.first().unwrap().min_score());
     }
 
-    fn get_bottom_level_limit(&self) -> usize {
+    fn set_bottom_level_limit(&mut self) {
         let min_score = self.questions.first().unwrap().min_score();
 
         let question_count = self.questions
@@ -53,6 +58,6 @@ impl QuestionRoster {
         
         // println!("Asking {} questions with score {}", question_count, min_score);
 
-        question_count
+        self.bottom_limit_index = question_count;
     }
 }
