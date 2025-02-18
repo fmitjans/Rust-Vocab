@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::terminal::Terminal;
 use crate::question_roster::QuestionRoster;
+use crate::file_handler::save_json;
 
 type ScoreType = i32;
 
@@ -53,8 +54,8 @@ impl Question {
         print!("\x1B[2J\x1B[1;1H"); // clear console
 
         match self {
-            Question::AtomicQuestion(q) => q.interrogate(),
-            Question::SequenceQuestion(q) => q.interrogate(min_score),
+            Question::AtomicQuestion(q) => q.interrogate(roster_ref),
+            Question::SequenceQuestion(q) => q.interrogate(min_score, roster_ref),
             }
         }
 
@@ -70,13 +71,29 @@ impl Question {
     }
 }
 
+pub enum Command {
+    Save,
+    Skip,
+    ToggleSkip,
+}
+
+fn string_to_command(s: &str) -> Option<Command> {
+    match s {
+        "1" => Some(Command::Save),
+        "2" => Some(Command::Skip),
+        "3" => Some(Command::ToggleSkip),
+        _ => None,
+    }
+}
+
 pub enum Answer {
     Correct(String),
     Incorrect(String),
+    Command(Command),
 }
 
 impl SequenceQuestion {
-    pub fn interrogate(&mut self, min_score: ScoreType) {
+    pub fn interrogate(&mut self, min_score: ScoreType, roster_ref: &mut QuestionRoster) {
         // println!("Sequence question with min score: {}", min_score);
 
         for atomic_question in &mut self.content {
@@ -93,14 +110,14 @@ impl SequenceQuestion {
             }
 
             // if bad score
-            atomic_question.interrogate();
+            atomic_question.interrogate(roster_ref);
         }
     }
 }
 
 impl AtomicQuestion {
 
-    pub fn interrogate(& mut self) {
+    pub fn interrogate(& mut self, roster_ref: &mut QuestionRoster) {
         
         let mut decreased_score_already = false;
         let mut terminal = Terminal::new(); // rustyline terminal
@@ -117,12 +134,30 @@ impl AtomicQuestion {
                     break;
                 },
 
-                Answer::Incorrect(a) => {
+                Answer::Incorrect(answer) => {
                     if !decreased_score_already {
                         self.score -= 1;
                         decreased_score_already = true;
                     }
-                    self.give_feedback(a);
+                    self.give_feedback(answer);
+                },
+
+                Answer::Command(command) => {
+                    match command {
+
+                        Command::Save => {
+                            save_json(&roster_ref.questions, "saved.json");
+                            println!("Your progress has been saved.");
+                        },
+
+                        Command::Skip => {
+                            todo!();
+                        },
+
+                        Command::ToggleSkip => {
+                            todo!();
+                        },
+                    }
                 },
             }
         }
@@ -136,6 +171,10 @@ impl AtomicQuestion {
         self.print_question();
 
         let user_answer = terminal.read_line(">> ");
+
+        if let Some(command) = string_to_command(&user_answer) {
+            return Answer::Command(command);
+        }
 
         if user_answer.to_lowercase() == self.answer.to_lowercase() {
             Answer::Correct(user_answer)
