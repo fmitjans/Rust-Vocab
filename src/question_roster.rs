@@ -29,7 +29,7 @@ impl QuestionRoster {
     pub fn interrogate_lowest(&mut self) {
         self.set_bottom_level_limit();
 
-        println!("Commands: 1. Save 2. Skip 3. Toggle Skip\n");
+        println!("Commands: 1. Save 2. Skip Correct 3. Skip Neutral 4. Toggle Skip\n");
 
         while self.current_question_index < self.bottom_limit_index {
 

@@ -73,15 +73,17 @@ impl Question {
 
 pub enum Command {
     Save,
-    Skip,
+    SkipCorrect,
+    SkipNeutral,
     ToggleSkip,
 }
 
 fn string_to_command(s: &str) -> Option<Command> {
     match s {
         "1" => Some(Command::Save),
-        "2" => Some(Command::Skip),
-        "3" => Some(Command::ToggleSkip),
+        "2" => Some(Command::SkipNeutral),
+        "3" => Some(Command::SkipCorrect),
+        "4" => Some(Command::ToggleSkip),
         _ => None,
     }
 }
@@ -150,8 +152,23 @@ impl AtomicQuestion {
                             println!("Your progress has been saved.");
                         },
 
-                        Command::Skip => {
-                            todo!();
+                        Command::SkipNeutral => {
+                            println!();
+                            println!("Skipping question (neutral)");
+                            self.print_question();
+                            println!("{}", self.answer);
+                            pause_for_key();
+                            break;
+                        },
+
+                        Command::SkipCorrect => {
+                            println!();
+                            println!("Skipping question (correct)");
+                            self.score += 1;
+                            self.print_question();
+                            println!("{}", self.answer);
+                            pause_for_key();
+                            break;
                         },
 
                         Command::ToggleSkip => {
