@@ -5,7 +5,7 @@ mod question_roster;
 mod question;
 mod terminal;
 
-use file_handler::{FileReader, save_json};
+use file_handler::{FileReader};
 use question_roster::{QuestionRoster, Order};
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     roster.even_out_scores();
     roster.interrogate_lowest();
 
-    save_json(&roster.questions, "saved.json");
+    roster.save("saved.json");
 
 }
 

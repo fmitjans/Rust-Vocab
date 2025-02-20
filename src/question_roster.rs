@@ -2,6 +2,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::question::{Question};
+use crate::file_handler::save_json;
 
 #[derive(Clone)]
 pub struct QuestionRoster {
@@ -70,16 +71,42 @@ impl QuestionRoster {
 
         self.ensure_ordered();
 
-        println!("Evening out scores");
-        println!("Highest score: {}", self.questions.last().unwrap().min_score());
-        println!("Lowest score: {}", self.questions.first().unwrap().min_score());
         let lowest_score = self.questions.first().unwrap().min_score();
         for question in self.questions.iter_mut() {
             question.decrease_score(lowest_score);
         }
-        println!("Scores evened out");
-        println!("Highest score: {}", self.questions.last().unwrap().min_score());
-        println!("Lowest score: {}", self.questions.first().unwrap().min_score());
+
+        self.print_levels();
+
+    }
+
+    pub fn save(&mut self, file_name: &str) {
+        self.even_out_scores();
+        self.sort_by_scores(Order::Descending);
+        save_json(&self.questions, file_name);
+    }
+
+    fn print_levels(&mut self) {
+
+        self.ensure_ordered();
+
+        let mut total_count = 0;
+        let mut level_count = 0;
+        let mut current_level_score = self.questions.first().unwrap().min_score();
+        
+        for question in self.questions.iter() {
+            if question.min_score() == current_level_score {
+                level_count += 1;
+            } else {
+                println!("{} questions with score {}", level_count, current_level_score);
+                total_count += level_count;
+                level_count = 1;
+                current_level_score = question.min_score();
+            }
+        }
+        println!("{} questions with score {}", level_count, current_level_score);
+        total_count += level_count;
+        println!("Total questions: {}", total_count);
     }
 
     fn set_bottom_level_limit(&mut self) {
@@ -99,8 +126,9 @@ impl QuestionRoster {
     }
 
     fn ensure_ordered(&mut self) {
-        if !self.is_ordered_ascending {
-            self.sort_by_scores(Order::Ascending);
-        }
+        //if !self.is_ordered_ascending {
+        //    self.sort_by_scores(Order::Ascending);
+        //}
+        self.sort_by_scores(Order::Ascending);
     }
 }
