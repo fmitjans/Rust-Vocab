@@ -27,7 +27,7 @@ impl QuestionRoster {
         }
     }
 
-    pub fn shuffle_order(&mut self) {
+    pub fn shuffle_questions(&mut self) {
         self.questions.shuffle(&mut thread_rng());
         self.is_ordered_ascending = false;
     }
@@ -48,9 +48,7 @@ impl QuestionRoster {
 
     pub fn interrogate_lowest(&mut self) {
 
-        if !self.is_ordered_ascending {
-            self.sort_by_scores(Order::Ascending);
-        }
+        self.ensure_ordered();
 
         self.set_bottom_level_limit();
 
@@ -70,9 +68,7 @@ impl QuestionRoster {
 
     pub fn even_out_scores(&mut self) {
 
-        if !self.is_ordered_ascending {
-            self.sort_by_scores(Order::Ascending);
-        }
+        self.ensure_ordered();
 
         println!("Evening out scores");
         println!("Highest score: {}", self.questions.last().unwrap().min_score());
@@ -88,9 +84,7 @@ impl QuestionRoster {
 
     fn set_bottom_level_limit(&mut self) {
 
-        if !self.is_ordered_ascending {
-            self.sort_by_scores(Order::Ascending);
-        }
+        self.ensure_ordered();
 
         let min_score = self.questions.first().unwrap().min_score();
 
@@ -102,5 +96,11 @@ impl QuestionRoster {
         // println!("Asking {} questions with score {}", question_count, min_score);
 
         self.bottom_limit_index = question_count;
+    }
+
+    fn ensure_ordered(&mut self) {
+        if !self.is_ordered_ascending {
+            self.sort_by_scores(Order::Ascending);
+        }
     }
 }
