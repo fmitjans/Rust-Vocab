@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use crate::terminal::Terminal;
-use crate::question_roster::QuestionRoster;
+use crate::question_roster::{QuestionRoster, Order};
 use crate::file_handler::save_json;
 
 type ScoreType = i32;
@@ -148,7 +148,10 @@ impl AtomicQuestion {
                     match command {
 
                         Command::Save => {
-                            save_json(&roster_ref.questions, "saved.json");
+                            let mut roster_copy = roster_ref.clone();
+                            roster_copy.even_out_scores();
+                            roster_copy.sort_by_scores(Order::Descending);
+                            save_json(&roster_copy.questions, "saved.json");
                             println!("Your progress has been saved.");
                         },
 

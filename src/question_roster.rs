@@ -3,10 +3,17 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::question::{Question};
 
+#[derive(Clone)]
 pub struct QuestionRoster {
     pub questions: Vec<Question>,
     pub current_question_index: usize,
     pub bottom_limit_index: usize,
+    pub is_ordered_ascending: bool,
+}
+
+pub enum Order {
+    Ascending,
+    Descending,
 }
 
 impl QuestionRoster {
@@ -16,17 +23,35 @@ impl QuestionRoster {
             questions: questions,
             current_question_index: 0,
             bottom_limit_index: 0,
+            is_ordered_ascending: false,
         }
     }
 
-    pub fn shuffle_by_scores(&mut self) {
-        
+    pub fn shuffle_order(&mut self) {
         self.questions.shuffle(&mut thread_rng());
+        self.is_ordered_ascending = false;
+    }
 
-        self.questions.sort_by(|a, b| a.min_score().cmp(&b.min_score()));
+    pub fn sort_by_scores(&mut self, order: Order) {
+        // self.questions.sort_by(|a, b| a.min_score().cmp(&b.min_score()));
+        match order {
+            Order::Ascending => {
+                self.questions.sort_by(|a, b| a.min_score().cmp(&b.min_score()));
+                self.is_ordered_ascending = true;
+            },
+            Order::Descending => {
+                self.questions.sort_by(|a, b| b.min_score().cmp(&a.min_score()));
+                self.is_ordered_ascending = false;
+            },
+        }
     }
 
     pub fn interrogate_lowest(&mut self) {
+
+        if !self.is_ordered_ascending {
+            self.sort_by_scores(Order::Ascending);
+        }
+
         self.set_bottom_level_limit();
 
         println!("Commands: 1. Save 2. Skip Correct 3. Skip Neutral 4. Toggle Skip\n");
@@ -44,6 +69,11 @@ impl QuestionRoster {
     }
 
     pub fn even_out_scores(&mut self) {
+
+        if !self.is_ordered_ascending {
+            self.sort_by_scores(Order::Ascending);
+        }
+
         println!("Evening out scores");
         println!("Highest score: {}", self.questions.last().unwrap().min_score());
         println!("Lowest score: {}", self.questions.first().unwrap().min_score());
@@ -57,6 +87,11 @@ impl QuestionRoster {
     }
 
     fn set_bottom_level_limit(&mut self) {
+
+        if !self.is_ordered_ascending {
+            self.sort_by_scores(Order::Ascending);
+        }
+
         let min_score = self.questions.first().unwrap().min_score();
 
         let question_count = self.questions
