@@ -76,12 +76,11 @@ impl QuestionRoster {
             question.decrease_score(lowest_score);
         }
 
-        self.print_levels();
-
     }
 
     pub fn save(&mut self, file_name: &str) {
         self.even_out_scores();
+        self.print_levels();
         self.sort_by_scores(Order::Descending);
         save_json(&self.questions, file_name);
     }
