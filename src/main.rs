@@ -15,6 +15,7 @@ fn main() {
     roster.shuffle_questions();
     roster.sort_by_scores(Order::Ascending);
     roster.even_out_scores();
+    roster.print_levels();
     roster.interrogate_lowest();
 
     roster.save("saved.json");

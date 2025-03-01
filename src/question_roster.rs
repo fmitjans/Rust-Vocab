@@ -85,7 +85,7 @@ impl QuestionRoster {
         save_json(&self.questions, file_name);
     }
 
-    fn print_levels(&mut self) {
+    pub fn print_levels(&mut self) {
 
         self.ensure_ordered();
 
