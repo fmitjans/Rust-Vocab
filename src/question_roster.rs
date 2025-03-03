@@ -9,7 +9,6 @@ pub struct QuestionRoster {
     pub questions: Vec<Question>,
     pub current_question_index: usize,
     pub bottom_limit_index: usize,
-    pub is_ordered_ascending: bool,
 }
 
 pub enum Order {
@@ -24,13 +23,12 @@ impl QuestionRoster {
             questions: questions,
             current_question_index: 0,
             bottom_limit_index: 0,
-            is_ordered_ascending: false,
         }
     }
 
     pub fn shuffle_questions(&mut self) {
         self.questions.shuffle(&mut thread_rng());
-        self.is_ordered_ascending = false;
+
     }
 
     pub fn sort_by_scores(&mut self, order: Order) {
@@ -38,11 +36,9 @@ impl QuestionRoster {
         match order {
             Order::Ascending => {
                 self.questions.sort_by(|a, b| a.min_score().cmp(&b.min_score()));
-                self.is_ordered_ascending = true;
             },
             Order::Descending => {
                 self.questions.sort_by(|a, b| b.min_score().cmp(&a.min_score()));
-                self.is_ordered_ascending = false;
             },
         }
     }
@@ -125,9 +121,6 @@ impl QuestionRoster {
     }
 
     fn ensure_ordered(&mut self) {
-        //if !self.is_ordered_ascending {
-        //    self.sort_by_scores(Order::Ascending);
-        //}
         self.sort_by_scores(Order::Ascending);
     }
 }
