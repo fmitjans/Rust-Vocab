@@ -3,15 +3,20 @@ use crate::terminal::Terminal;
 use crate::question_roster::{QuestionRoster};
 
 type ScoreType = i32;
+fn score_zero() -> ScoreType {
+    0
+}
 
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AtomicQuestion {
     question: String,
+    #[serde(default)] // Option<String> implements Default None
+    note: Option<String>,
     answer: String,
     score: ScoreType,
-    #[serde(default)]
-    note: Option<String>,
+    #[serde(default = "score_zero")]
+    previous_rise: ScoreType,
 }
 
 #[derive(Clone)]
