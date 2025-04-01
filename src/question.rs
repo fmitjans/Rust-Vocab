@@ -16,7 +16,7 @@ pub struct AtomicQuestion {
     answer: String,
     score: ScoreType,
     #[serde(default = "score_zero")]
-    previous_rise: ScoreType,
+    previous_raise: ScoreType,
 }
 
 #[derive(Clone)]
@@ -134,7 +134,9 @@ impl AtomicQuestion {
                 Answer::Correct(a) => {
                     self.give_feedback(a);
                     if !decreased_score_already {
-                        self.score += 1;
+                        self.previous_raise += 1;
+                        self.score += self.previous_raise;
+                        println!("Score raised to {}", self.score);
                     }
                     pause_for_key();
                     break;
@@ -144,6 +146,7 @@ impl AtomicQuestion {
                     if !decreased_score_already {
                         self.score -= 1;
                         decreased_score_already = true;
+                        self.previous_raise = (self.previous_raise - 1).max(0);
                     }
                     self.give_feedback(answer);
                 },
@@ -190,6 +193,7 @@ impl AtomicQuestion {
 
         println!();
         println!("Current score: {}", self.score);
+        println!("Previous raise: {}", self.previous_raise);
 
         self.print_question();
 
