@@ -134,7 +134,13 @@ impl AtomicQuestion {
                 Answer::Correct(a) => {
                     self.give_feedback(a);
                     if !decreased_score_already {
-                        self.previous_raise += 1;
+                        if roster_ref.bottom_limit_index > 3 {
+                            self.previous_raise += 1;
+                        }
+                        else {
+                            println!("Kept raise due to low difficulty");
+                            self.previous_raise = self.previous_raise.max(1);
+                        }
                         self.score += self.previous_raise;
                         println!("Score raised to {}", self.score);
                     }
@@ -146,7 +152,7 @@ impl AtomicQuestion {
                     if !decreased_score_already {
                         self.score -= 1;
                         decreased_score_already = true;
-                        self.previous_raise = (self.previous_raise - 1).max(0);
+                        self.previous_raise = (self.previous_raise - 1).max(1);
                     }
                     self.give_feedback(answer);
                 },
