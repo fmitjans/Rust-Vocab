@@ -134,7 +134,7 @@ impl AtomicQuestion {
                 Answer::Correct(a) => {
                     self.give_feedback(a);
                     if !decreased_score_already {
-                        if roster_ref.bottom_limit_index > 3 {
+                        if roster_ref.superior_limit_index - roster_ref.inferior_limit_index > 3 {
                             self.previous_raise += 1;
                         }
                         else {

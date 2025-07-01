@@ -4,11 +4,14 @@ use rand::thread_rng;
 use crate::question::{Question};
 use crate::file_handler::save_json;
 
+const MINIMUM_QUESTION_COUNT: usize = 3;
+
 #[derive(Clone)]
 pub struct QuestionRoster {
     pub questions: Vec<Question>,
     pub current_question_index: usize,
-    pub bottom_limit_index: usize,
+    pub superior_limit_index: usize,
+    pub inferior_limit_index: usize,
 }
 
 pub enum Order {
@@ -22,7 +25,8 @@ impl QuestionRoster {
         Self {
             questions: questions,
             current_question_index: 0,
-            bottom_limit_index: 0,
+            superior_limit_index: 0,
+            inferior_limit_index: 0,
         }
     }
 
@@ -47,11 +51,18 @@ impl QuestionRoster {
 
         self.ensure_ordered();
 
-        self.set_bottom_level_limit();
+        self.set_bottom_level_limits();
 
         println!("Commands: 1. Save 2. Skip Neutral 3. Skip Correct 4. Toggle Skip\n");
 
-        while self.current_question_index < self.bottom_limit_index {
+        if self.inferior_limit_index >= self.superior_limit_index {
+            println!("No questions to interrogate");
+            return;
+        }
+
+        self.current_question_index = self.inferior_limit_index;
+        while self.current_question_index >= self.inferior_limit_index  && 
+              self.current_question_index < self.superior_limit_index {
 
             let mut current_question = self.questions[self.current_question_index].clone();
 
@@ -104,20 +115,37 @@ impl QuestionRoster {
         println!("Total questions: {}", total_count);
     }
 
-    fn set_bottom_level_limit(&mut self) {
+    fn set_bottom_level_limits(&mut self) {
 
         self.ensure_ordered();
 
-        let min_score = self.questions.first().unwrap().min_score();
+        // let min_score = self.questions.first().unwrap().min_score();
+        let mut min_score = 0;
 
-        let question_count = self.questions
-            .iter()
-            .take_while(|q| q.min_score() == min_score)
-            .count();
+        let mut question_count = 0;
         
-        // println!("Asking {} questions with score {}", question_count, min_score);
+        while question_count < MINIMUM_QUESTION_COUNT && min_score < self.questions.last().unwrap().min_score() {
+            question_count = self.questions
+                .iter()
+                .filter(|q| q.min_score() == min_score)
+                .count();
 
-        self.bottom_limit_index = question_count;
+            println!("Found {} questions with score {}", question_count, min_score);
+            if question_count < MINIMUM_QUESTION_COUNT {
+                println!("Not enough questions");
+                self.inferior_limit_index += question_count;
+            }
+
+            println!("Inferior limit index: {}", self.inferior_limit_index);
+            
+            min_score += 1;
+        }
+        
+        
+        
+        self.superior_limit_index = self.inferior_limit_index + question_count;
+        println!("Superior limit index: {}", self.superior_limit_index);
+        println!();
     }
 
     fn ensure_ordered(&mut self) {
