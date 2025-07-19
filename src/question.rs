@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 use crate::terminal::Terminal;
 use crate::question_roster::{QuestionRoster};
 
-type ScoreType = i32;
+pub type ScoreType = i32;
+
 fn score_zero() -> ScoreType {
     0
 }

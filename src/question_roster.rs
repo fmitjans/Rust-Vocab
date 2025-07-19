@@ -3,6 +3,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::question::{Question};
 use crate::file_handler::save_json;
+use crate::question_level::QuestionLevel;
 
 const MINIMUM_QUESTION_COUNT: usize = 3;
 
@@ -12,6 +13,7 @@ pub struct QuestionRoster {
     pub current_question_index: usize,
     pub superior_limit_index: usize,
     pub inferior_limit_index: usize,
+    pub question_levels: Vec<QuestionLevel>,
 }
 
 pub enum Order {
@@ -27,6 +29,39 @@ impl QuestionRoster {
             current_question_index: 0,
             superior_limit_index: 0,
             inferior_limit_index: 0,
+            question_levels: Vec::new(),
+        }
+    }
+
+    pub fn build_levels(&mut self) {
+        self.shuffle_questions();
+        self.sort_by_scores(Order::Ascending);
+        self.even_out_scores();
+        
+        while self.questions.len() > 0 {
+            let lowest_score = self.questions.first().unwrap().min_score();
+            let mut questions_in_level: Vec<Question> = Vec::new();
+            self.questions.retain(|q| {
+                if q.min_score() == lowest_score {
+                    questions_in_level.push(q.clone());
+                    false
+                } else {
+                    true
+                }
+            });
+            if !questions_in_level.is_empty() {
+                let level = QuestionLevel::new(questions_in_level);
+                self.question_levels.push(level);
+            }
+        }
+    }
+
+    pub fn print_levels2(&self) {
+        for (i, level) in self.question_levels.iter().enumerate() {
+            println!("Level {}: score {}", i + 1, level.score);
+            for (j, q) in level.questions.iter().enumerate() {
+                println!("  Question {}: {:?}", j + 1, q);
+            }
         }
     }
 
@@ -75,8 +110,6 @@ impl QuestionRoster {
     }
 
     pub fn even_out_scores(&mut self) {
-
-        self.ensure_ordered();
 
         let lowest_score = self.questions.first().unwrap().min_score();
         for question in self.questions.iter_mut() {
