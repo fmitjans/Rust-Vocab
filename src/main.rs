@@ -14,7 +14,7 @@ fn main() {
 
     let mut roster = QuestionRoster::new(question_vec);
     roster.build_levels();
-    // roster.print_levels2();
+    println!("{:?}", roster);
 
     // roster.shuffle_questions();
     // roster.sort_by_scores(Order::Ascending);

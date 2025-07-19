@@ -1,7 +1,7 @@
 use crate::question::{Question, ScoreType};
 use crate::question_roster::{QuestionRoster};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct QuestionLevel {
     pub questions: Vec<Question>,
     pub length: usize,

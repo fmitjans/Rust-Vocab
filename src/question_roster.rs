@@ -1,13 +1,13 @@
-
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::question::{Question};
 use crate::file_handler::save_json;
 use crate::question_level::QuestionLevel;
+use std::fmt;
 
 const MINIMUM_QUESTION_COUNT: usize = 3;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct QuestionRoster {
     pub questions: Vec<Question>,
     pub current_question_index: usize,
@@ -52,15 +52,6 @@ impl QuestionRoster {
             if !questions_in_level.is_empty() {
                 let level = QuestionLevel::new(questions_in_level);
                 self.question_levels.push(level);
-            }
-        }
-    }
-
-    pub fn print_levels2(&self) {
-        for (i, level) in self.question_levels.iter().enumerate() {
-            println!("Level {}: score {}", i + 1, level.score);
-            for (j, q) in level.questions.iter().enumerate() {
-                println!("  Question {}: {:?}", j + 1, q);
             }
         }
     }
@@ -183,5 +174,17 @@ impl QuestionRoster {
 
     fn ensure_ordered(&mut self) {
         self.sort_by_scores(Order::Ascending);
+    }
+}
+
+impl fmt::Display for QuestionRoster {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for (i, level) in self.question_levels.iter().enumerate() {
+            writeln!(f, "Level {}: score {}", i + 1, level.score)?;
+            for (j, q) in level.questions.iter().enumerate() {
+                writeln!(f, "  Question {}: {:?}", j + 1, q)?;
+            }
+        }
+        Ok(())
     }
 }
