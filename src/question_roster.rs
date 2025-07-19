@@ -14,6 +14,7 @@ pub struct QuestionRoster {
     pub superior_limit_index: usize,
     pub inferior_limit_index: usize,
     pub question_levels: Vec<QuestionLevel>,
+    pub wrong_questions: Vec<Question>,
 }
 
 pub enum Order {
@@ -30,6 +31,7 @@ impl QuestionRoster {
             superior_limit_index: 0,
             inferior_limit_index: 0,
             question_levels: Vec::new(),
+            wrong_questions: Vec::new(),
         }
     }
 
@@ -54,6 +56,8 @@ impl QuestionRoster {
                 self.question_levels.push(level);
             }
         }
+
+        self.print_levels();
     }
 
     pub fn shuffle_questions(&mut self) {
@@ -118,24 +122,12 @@ impl QuestionRoster {
 
     pub fn print_levels(&mut self) {
 
-        self.ensure_ordered();
-
         let mut total_count = 0;
-        let mut level_count = 0;
-        let mut current_level_score = self.questions.first().unwrap().min_score();
-        
-        for question in self.questions.iter() {
-            if question.min_score() == current_level_score {
-                level_count += 1;
-            } else {
-                println!("{} questions with score {}", level_count, current_level_score);
-                total_count += level_count;
-                level_count = 1;
-                current_level_score = question.min_score();
-            }
+        for level in &self.question_levels {
+            println!("{} questions with score {}", level.length, level.score);
+            total_count += level.length;
         }
-        println!("{} questions with score {}", level_count, current_level_score);
-        total_count += level_count;
+
         println!("Total questions: {}", total_count);
     }
 
