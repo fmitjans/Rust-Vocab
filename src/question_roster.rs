@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::question::{Question};
