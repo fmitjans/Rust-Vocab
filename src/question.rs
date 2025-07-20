@@ -164,6 +164,7 @@ impl AtomicQuestion {
                         println!("Score lowered to {}", question_clone.score);
                         decreased_score_already = true;
                         question_clone.previous_raise = (question_clone.previous_raise - 1).max(1);
+                        println!("Raise lowered to {}", question_clone.previous_raise);
                     }
                     self.give_feedback(answer);
                 },
