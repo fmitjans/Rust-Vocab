@@ -15,9 +15,9 @@ fn main() {
     let mut roster = QuestionRoster::new(question_vec);
     roster.build_levels();
 
-    // roster.interrogate_lowest();
+    roster.interrogate_lowest2();
 
-    // roster.save("saved.json");
+    roster.save("saved.json");
 
 }
 

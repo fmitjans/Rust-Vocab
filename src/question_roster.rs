@@ -87,28 +87,28 @@ impl QuestionRoster {
         }
 
         let min_count = MINIMUM_QUESTION_COUNT;
-        let index_to_use = self.question_levels.iter()
+        let temp_level_index = self.question_levels.iter()
                 .position(|level| level.questions.len() >= min_count);
-        
-        let current_level = match index_to_use {
-            Some(i) => {
-                println!("Selected level with score {}", self.question_levels[i].score);
-                &mut self.question_levels[i]
+
+        let level_index = match temp_level_index {
+            Some(index) => {
+                println!("Selected level with score {}", self.question_levels[index].score);
+                index
             },
             None => {
                 println!("No level has enough questions (minimum {}). Using the first level.", min_count);
-                &mut self.question_levels[0]
+                0
             }
         };
-        // Now current_level is owned and removed from self.question_levels
-        
-        for question in &current_level.questions {
-            let new_question = question.interrogate(&self);
-            if new_question.min_score() < question.min_score() {
-                self.number_of_wrongs += 1;
-            }
-            self.altered_questions.push(new_question);
+
+        let mut roster_clone = self.clone();
+        for question_index in 0..self.question_levels[level_index].questions.len() {
+            let new_question = self.question_levels[level_index].questions[question_index]
+                .interrogate(&roster_clone);
+            roster_clone.question_levels[level_index].questions[question_index] = new_question;
         }
+
+        self.question_levels = roster_clone.question_levels;
         
     }
 
@@ -149,6 +149,8 @@ impl QuestionRoster {
     }
 
     pub fn destruct_levels(&mut self) {
+        
+        self.questions.clear();
 
         for level in &self.question_levels {
             for question in &level.questions {
