@@ -93,11 +93,11 @@ impl QuestionRoster {
         let current_level = match index_to_use {
             Some(i) => {
                 println!("Selected level with score {}", self.question_levels[i].score);
-                self.question_levels.remove(i)
+                &mut self.question_levels[i]
             },
             None => {
                 println!("No level has enough questions (minimum {}). Using the first level.", min_count);
-                self.question_levels.remove(0)
+                &mut self.question_levels[0]
             }
         };
         // Now current_level is owned and removed from self.question_levels
@@ -109,8 +109,6 @@ impl QuestionRoster {
             }
             self.altered_questions.push(new_question);
         }
-
-
         
     }
 
