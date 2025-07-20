@@ -16,7 +16,7 @@ fn main() {
     roster.build_levels();
     roster.print_levels();
 
-    roster.interrogate_lowest2();
+    roster.interrogate_lowest();
 
     roster.save("saved.json");
 

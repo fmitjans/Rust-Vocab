@@ -76,7 +76,7 @@ impl QuestionRoster {
         }
     }
 
-    pub fn interrogate_lowest2(&mut self) {
+    pub fn interrogate_lowest(&mut self) {
 
         if self.question_levels.is_empty() {
             println!("No question levels available.");
