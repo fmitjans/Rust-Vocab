@@ -7,7 +7,7 @@ mod terminal;
 mod question_level;
 
 use file_handler::{FileReader};
-use question_roster::{QuestionRoster, Order};
+use question_roster::{QuestionRoster};
 
 fn main() {
     let question_vec = FileReader::load_questions();

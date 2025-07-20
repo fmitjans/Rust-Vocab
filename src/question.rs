@@ -8,12 +8,6 @@ fn score_zero() -> ScoreType {
     0
 }
 
-pub enum QuestionResult {
-    Correct,
-    Incorrect,
-    Neutral
-}
-
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AtomicQuestion {
@@ -43,6 +37,19 @@ pub enum Question {
     #[serde(rename = "atomic")]
     AtomicQuestion(AtomicQuestion),
 
+}
+
+pub enum Command {
+    Save,
+    SkipCorrect,
+    SkipNeutral,
+    ToggleSkip,
+}
+
+pub enum Answer {
+    Correct(String),
+    Incorrect(String),
+    Command(Command),
 }
 
 impl Question {
@@ -82,13 +89,6 @@ impl Question {
     }
 }
 
-pub enum Command {
-    Save,
-    SkipCorrect,
-    SkipNeutral,
-    ToggleSkip,
-}
-
 fn string_to_command(s: &str) -> Option<Command> {
     match s {
         "1" => Some(Command::Save),
@@ -97,12 +97,6 @@ fn string_to_command(s: &str) -> Option<Command> {
         "4" => Some(Command::ToggleSkip),
         _ => None,
     }
-}
-
-pub enum Answer {
-    Correct(String),
-    Incorrect(String),
-    Command(Command),
 }
 
 impl SequenceQuestion {
@@ -148,11 +142,11 @@ impl AtomicQuestion {
         let unaltered_clone = question_clone.clone();
 
         loop {
-            match self.ask(&mut terminal) {
+            match question_clone.ask(&mut terminal) {
                 
                 Answer::Correct(a) => {
 
-                    self.give_feedback(a);
+                    question_clone.give_feedback(a);
 
                     if !decreased_score_already {
                         question_clone.score += question_clone.previous_raise;
@@ -167,6 +161,7 @@ impl AtomicQuestion {
                 Answer::Incorrect(answer) => {
                     if !decreased_score_already {
                         question_clone.score -= 1;
+                        println!("Score lowered to {}", question_clone.score);
                         decreased_score_already = true;
                         question_clone.previous_raise = (question_clone.previous_raise - 1).max(1);
                     }
@@ -178,7 +173,6 @@ impl AtomicQuestion {
 
                         Command::Save => {
                             let mut roster_copy = roster_ref.clone();
-                            roster_copy.even_out_scores();
                             roster_copy.save("saved.json");
                             println!("Your progress has been saved.");
                         },
@@ -186,8 +180,8 @@ impl AtomicQuestion {
                         Command::SkipNeutral => {
                             println!();
                             println!("Skipping question (neutral)");
-                            self.print_question();
-                            println!("{}", self.answer);
+                            unaltered_clone.print_question();
+                            println!("{}", unaltered_clone.answer);
                             pause_for_key();
                             return unaltered_clone;
                         },
