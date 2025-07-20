@@ -148,6 +148,7 @@ impl QuestionRoster {
     pub fn print_levels(&mut self) {
 
         let mut roster_clone = self.clone();
+        roster_clone.destruct_levels();
         roster_clone.build_levels();
 
         let mut total_count = 0;
