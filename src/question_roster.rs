@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use crate::question::{Question};
+use crate::question::{self, Question};
 use crate::file_handler::save_json;
 use crate::question_level::QuestionLevel;
 use std::fmt;
@@ -14,7 +14,8 @@ pub struct QuestionRoster {
     pub superior_limit_index: usize,
     pub inferior_limit_index: usize,
     pub question_levels: Vec<QuestionLevel>,
-    pub wrong_questions: Vec<Question>,
+    pub altered_questions: Vec<Question>,
+    pub number_of_wrongs: usize,
 }
 
 pub enum Order {
@@ -31,7 +32,8 @@ impl QuestionRoster {
             superior_limit_index: 0,
             inferior_limit_index: 0,
             question_levels: Vec::new(),
-            wrong_questions: Vec::new(),
+            altered_questions: Vec::new(),
+            number_of_wrongs: 0,
         }
     }
 
@@ -77,6 +79,41 @@ impl QuestionRoster {
         }
     }
 
+    pub fn interrogate_lowest2(&mut self) {
+
+        if self.question_levels.is_empty() {
+            println!("No question levels available.");
+            return;
+        }
+
+        let min_count = MINIMUM_QUESTION_COUNT;
+        let index_to_use = self.question_levels.iter()
+                .position(|level| level.questions.len() >= min_count);
+        
+        let current_level = match index_to_use {
+            Some(i) => {
+                println!("Selected level with score {}", self.question_levels[i].score);
+                self.question_levels.remove(i)
+            },
+            None => {
+                println!("No level has enough questions (minimum {}). Using the first level.", min_count);
+                self.question_levels.remove(0)
+            }
+        };
+        // Now current_level is owned and removed from self.question_levels
+        
+        for question in &current_level.questions {
+            let new_question = question.interrogate(&self);
+            if new_question.min_score() < question.min_score() {
+                self.number_of_wrongs += 1;
+            }
+            self.altered_questions.push(new_question);
+        }
+
+
+        
+    }
+
     pub fn interrogate_lowest(&mut self) {
 
         self.ensure_ordered();
@@ -113,10 +150,27 @@ impl QuestionRoster {
 
     }
 
+    pub fn destruct_levels(&mut self) {
+
+        for level in &self.question_levels {
+            for question in &level.questions {
+                self.questions.push(question.clone());
+            }
+        }
+
+        for question in &self.altered_questions {
+            self.questions.push(question.clone());
+        }
+
+        self.sort_by_scores(Order::Ascending);
+    }
+
     pub fn save(&mut self, file_name: &str) {
+        self.destruct_levels();
+        self.sort_by_scores(Order::Ascending);
         self.even_out_scores();
         self.print_levels();
-        self.sort_by_scores(Order::Descending);
+        // self.sort_by_scores(Order::Descending);
         save_json(&self.questions, file_name);
     }
 

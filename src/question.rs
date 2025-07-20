@@ -8,6 +8,12 @@ fn score_zero() -> ScoreType {
     0
 }
 
+pub enum QuestionResult {
+    Correct,
+    Incorrect,
+    Neutral
+}
+
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AtomicQuestion {
@@ -54,13 +60,13 @@ impl Question {
         }
     }
 
-    pub fn interrogate(&mut self, roster_ref: &mut QuestionRoster) {
+    pub fn interrogate(&self, roster_ref: &QuestionRoster) -> Question {
         let min_score = self.min_score();
         print!("\x1B[2J\x1B[1;1H"); // clear console
 
         match self {
-            Question::AtomicQuestion(q) => q.interrogate(roster_ref),
-            Question::SequenceQuestion(q) => q.interrogate(min_score, roster_ref),
+            Question::AtomicQuestion(q) =>  Question::AtomicQuestion(q.interrogate(roster_ref)),
+            Question::SequenceQuestion(q) => Question::SequenceQuestion(q.interrogate(min_score, roster_ref)),
             }
         }
 
@@ -100,13 +106,19 @@ pub enum Answer {
 }
 
 impl SequenceQuestion {
-    pub fn interrogate(&mut self, min_score: ScoreType, roster_ref: &mut QuestionRoster) {
-        // println!("Sequence question with min score: {}", min_score);
+    pub fn interrogate(&self, min_score: ScoreType, roster_ref: &QuestionRoster) -> SequenceQuestion {
+        
+        let mut new_sequence = SequenceQuestion {
+            content: Vec::new(),
+        };
 
-        for atomic_question in &mut self.content {
+        for atomic_question in &self.content {
 
             // if good score, skip question
             if atomic_question.score != min_score {
+
+                new_sequence.content.push(atomic_question.clone());
+
                 println!();
                 println!("Skipping question");
                 atomic_question.print_question();
@@ -117,43 +129,46 @@ impl SequenceQuestion {
             }
 
             // if bad score
-            atomic_question.interrogate(roster_ref);
+            let new_atomic = atomic_question.interrogate(roster_ref);
+            new_sequence.content.push(new_atomic);
         }
+
+        return new_sequence;
     }
 }
 
 impl AtomicQuestion {
 
-    pub fn interrogate(& mut self, roster_ref: &mut QuestionRoster) {
+    pub fn interrogate(&self, roster_ref: &QuestionRoster) -> AtomicQuestion {
         
         let mut decreased_score_already = false;
         let mut terminal = Terminal::new(); // rustyline terminal
+
+        let mut question_clone = self.clone();
+        let unaltered_clone = question_clone.clone();
 
         loop {
             match self.ask(&mut terminal) {
                 
                 Answer::Correct(a) => {
+
                     self.give_feedback(a);
+
                     if !decreased_score_already {
-                        if roster_ref.superior_limit_index - roster_ref.inferior_limit_index > 3 {
-                            self.previous_raise += 1;
-                        }
-                        else {
-                            println!("Kept raise due to low difficulty");
-                            self.previous_raise = self.previous_raise.max(1);
-                        }
-                        self.score += self.previous_raise;
-                        println!("Score raised to {}", self.score);
+                        question_clone.score += question_clone.previous_raise;
+                        question_clone.previous_raise += 1;
+                        println!("Score raised to {}", question_clone.score);
                     }
+                    
                     pause_for_key();
-                    break;
+                    return question_clone;
                 },
 
                 Answer::Incorrect(answer) => {
                     if !decreased_score_already {
-                        self.score -= 1;
+                        question_clone.score -= 1;
                         decreased_score_already = true;
-                        self.previous_raise = (self.previous_raise - 1).max(1);
+                        question_clone.previous_raise = (question_clone.previous_raise - 1).max(1);
                     }
                     self.give_feedback(answer);
                 },
@@ -174,17 +189,19 @@ impl AtomicQuestion {
                             self.print_question();
                             println!("{}", self.answer);
                             pause_for_key();
-                            break;
+                            return unaltered_clone;
                         },
 
                         Command::SkipCorrect => {
                             println!();
                             println!("Skipping question (correct)");
-                            self.score += 1;
+
+                            question_clone.score += 1;
                             self.print_question();
                             println!("{}", self.answer);
+
                             pause_for_key();
-                            break;
+                            return question_clone;
                         },
 
                         Command::ToggleSkip => {
@@ -196,7 +213,7 @@ impl AtomicQuestion {
         }
     }
     
-    pub fn ask(&mut self, terminal: &mut Terminal) -> Answer {
+    pub fn ask(&self, terminal: &mut Terminal) -> Answer {
 
         println!();
         println!("Current score: {}", self.score);
