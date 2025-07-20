@@ -34,6 +34,9 @@ impl QuestionRoster {
     }
 
     pub fn build_levels(&mut self) {
+
+        self.question_levels.clear();
+
         self.shuffle_questions();
         self.sort_by_scores(Order::Ascending);
         self.even_out_scores();
@@ -54,8 +57,6 @@ impl QuestionRoster {
                 self.question_levels.push(level);
             }
         }
-
-        self.print_levels();
     }
 
     pub fn shuffle_questions(&mut self) {
@@ -139,14 +140,18 @@ impl QuestionRoster {
         self.sort_by_scores(Order::Ascending);
         self.even_out_scores();
         self.print_levels();
+
         // self.sort_by_scores(Order::Descending);
         save_json(&self.questions, file_name);
     }
 
     pub fn print_levels(&mut self) {
 
+        let mut roster_clone = self.clone();
+        roster_clone.build_levels();
+
         let mut total_count = 0;
-        for level in &self.question_levels {
+        for level in &roster_clone.question_levels {
             println!("{} questions in level {}", level.length, level.score);
             total_count += level.length;
         }

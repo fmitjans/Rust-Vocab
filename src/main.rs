@@ -14,6 +14,7 @@ fn main() {
 
     let mut roster = QuestionRoster::new(question_vec);
     roster.build_levels();
+    roster.print_levels();
 
     roster.interrogate_lowest2();
 
