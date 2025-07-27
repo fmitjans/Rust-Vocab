@@ -7,7 +7,7 @@ use crate::file_handler::save_json;
 use crate::question_level::QuestionLevel;
 use std::fmt;
 
-const MINIMUM_QUESTION_COUNT: usize = 3;
+const MINIMUM_QUESTION_COUNT: usize = 4;
 
 #[derive(Debug, Clone)]
 pub struct QuestionRoster {
@@ -84,25 +84,25 @@ impl QuestionRoster {
         }
 
         let min_count = MINIMUM_QUESTION_COUNT;
-        let temp_level_index = self.question_levels.iter()
-                .position(|level| level.questions.len() >= min_count);
+        let mut current_count = 0;
+        let mut levels_to_use = Vec::new();
 
-        let level_index = match temp_level_index {
-            Some(index) => {
-                println!("Selected level with score {}", self.question_levels[index].score);
-                index
-            },
-            None => {
-                println!("No level has enough questions (minimum {}). Using the first level.", min_count);
-                0
+        for (level_index, level) in self.question_levels.iter().enumerate() {
+            levels_to_use.push(level_index);
+            current_count += level.length;
+            if current_count >= min_count {
+                break;
             }
-        };
+        }
+
+        println!("Using {} levels with {} questions", levels_to_use.len(), current_count);
 
         let mut roster_clone = self.clone();
-        for question_index in 0..self.question_levels[level_index].questions.len() {
-            let new_question = self.question_levels[level_index].questions[question_index]
-                .interrogate(&roster_clone);
-            roster_clone.question_levels[level_index].questions[question_index] = new_question;
+        for level_index in levels_to_use {
+            for (question_index, question) in self.question_levels[level_index].questions.iter().enumerate() {
+                let new_question = question.interrogate(&roster_clone);
+                roster_clone.question_levels[level_index].questions[question_index] = new_question;
+            }
         }
 
         self.question_levels = roster_clone.question_levels;
