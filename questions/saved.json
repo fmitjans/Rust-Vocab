@@ -1,0 +1,146 @@
+[
+  {
+    "type": "atomic",
+    "question": "who, to who are you speaking?",
+    "note": null,
+    "answer": "kiu, al kiu vi parolas",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "that, what does that mean?",
+    "note": null,
+    "answer": "tio, kion tio signifas",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "then (time), but not before then?",
+    "note": null,
+    "answer": "tiam, sed ne pli frue ol tiam",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "always, I always am with you?",
+    "note": null,
+    "answer": "cxiam, mi cxiam estas kun vi",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "what, what are you reading?",
+    "note": null,
+    "answer": "kio, kion vi legas",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "that one, I already know that one?",
+    "note": null,
+    "answer": "tiu, mi jam konas tiun",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "nothing, nothing scares me?",
+    "note": null,
+    "answer": "nenio, nenio timigas min",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "what kind, what kind of plant do they grow?",
+    "note": null,
+    "answer": "kia, kian planton ili kreskas",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "some kind, it is some kind of language?",
+    "note": null,
+    "answer": "ia, gxi estas ia lingvo",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "some time, I some time beat him?",
+    "note": null,
+    "answer": "iam, mi iam venkis lin",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "that kind, I hate that kind of weather?",
+    "note": null,
+    "answer": "tia, mi malamas tian veteron",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "all, not all that glitters is gold?",
+    "note": null,
+    "answer": "cxio, ne cxio brilanta estas oro",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "no one, no one knows where he lives?",
+    "note": null,
+    "answer": "neniu, neniu scias kie li logxas",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "when, when do I start?",
+    "note": null,
+    "answer": "kiam, kiam gxi komencigxis",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "never, only that one doesn't fail, who never does, better late than never?",
+    "note": null,
+    "answer": "neniam, nur tiu ne eraras, kiu neniam ion faras, pli bone malfrue ol neniam",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "someone, someone was here?",
+    "note": null,
+    "answer": "iu, iu estis cxi tie",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "something, better something than nothing?",
+    "note": null,
+    "answer": "io, pli bona io ol nenio",
+    "score": 0,
+    "previous_raise": 1
+  },
+  {
+    "type": "atomic",
+    "question": "every, every man is mortal?",
+    "note": null,
+    "answer": "cxiu, cxiu homo estas mortema",
+    "score": 0,
+    "previous_raise": 1
+  }
+]
